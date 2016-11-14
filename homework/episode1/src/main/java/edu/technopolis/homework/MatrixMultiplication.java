@@ -17,6 +17,7 @@ public class MatrixMultiplication {
         }
         if (args.length != (4 + n * m + x * y)) {
             System.out.println("Неверное количество аргументов. Проверьте, что Вы ввели все данные правильно");
+            return;
         }
         int count = 4;
         long[][] matrixA = new long[n][m];
