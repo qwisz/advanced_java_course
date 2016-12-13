@@ -18,7 +18,7 @@ public class Main {
         }
         int n = 0;
         while (true) {
-            n = (int)(rand.nextDouble()) + 1;
+            n = Math.round(rand.nextFloat()) + 1;
             double a = pika1.attack(n);
             pika2.block(a);
             System.out.println(pika2.toString());
@@ -26,7 +26,7 @@ public class Main {
                 System.out.println(pika1.name + " IS CHAMPIOOOOOON!!!");
                 break;
             }
-            n = (int)(rand.nextDouble()) + 1;
+            n = Math.round(rand.nextFloat()) + 1;
             double b = pika2.attack(n);
             pika1.block(b);
             System.out.println(pika1.toString());
