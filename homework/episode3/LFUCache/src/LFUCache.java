@@ -4,57 +4,66 @@ import java.util.*;
 /**
  * Created by Anton on 13.12.2016.
  */
-public class LFUCache {
+public class LFUCache<E> implements Iterable<E> {
 
     private final int CAPACITY = 10;
 
-    class Value {
-        private long answer;
+    public class Value {
+        private E value;
         private int frequency;
 
-        Value(long answer) {
-            this.answer = answer;
+        Value(E value) {
+            this.value = value;
             this.frequency = 0;
         }
 
-        Value(long answer, int frequency) {
-            this.answer = answer;
+        Value(E value, int frequency) {
+            this.value = value;
             this.frequency = frequency;
         }
 
-        public long getAnswer() {
-            return answer;
+        public E getValue() {
+            return value;
         }
 
-        public int getFrequency() {
+        int getFrequency() {
             return frequency;
         }
+
+        void incFrequency() {
+            this.frequency++;
+        }
     }
 
-    private Map<Integer, Value> cache = new HashMap<>();
+    private Map<Integer, Value> cache = new LinkedHashMap<>();
 
-    public long calculate(int key) {
-        return calculateWithCache(key);
+    public void add(int key, E value) {
+        if (isFull()) {
+            int removedKey = getLFUKey();
+            cache.remove(removedKey);
+        }
+        addNewValue(key, value);
     }
 
-    private long calculateWithCache(int key){
+    public E get(int key) {
         if (cache.containsKey(key)) {
-            int f = cache.get(key).frequency++;
-            long ans = cache.get(key).answer;
-            cache.put(key, new Value(ans, f));
-            return ans;
+            Value data = cache.get(key);
+            data.incFrequency();
+            cache.put(key, data);
+            return data.value;
         }
-        long ans = fib(key);
-        if (CAPACITY < cache.size() + 1) {
-            cache.remove(getMinFreq());
-            cache.put(key, new Value(ans));
-            return ans;
-        }
-        cache.put(key, new Value(ans));
-        return ans;
+        return null;
     }
 
-    private int getMinFreq(){
+    private void addNewValue(int key, E value){
+        cache.put(key, new Value(value));
+    }
+
+    private boolean isFull(){
+        return cache.size() == CAPACITY;
+    }
+
+    private int getLFUKey(){
         int min = Integer.MAX_VALUE;
         int key = -1;
         for (Map.Entry<Integer, Value> item : cache.entrySet()) {
@@ -66,9 +75,21 @@ public class LFUCache {
         return key;
     }
 
-    private long fib(int n) {
-        if (n == 1 || n == 2)
-            return 1;
-        return fib(n - 1) + fib(n - 2);
+    public Iterator<E> iterator() {
+        return new LFUCacheIterator();
+    }
+
+    private class LFUCacheIterator implements Iterator<E> {
+        Iterator<Map.Entry<Integer, Value>> itr = cache.entrySet().iterator();
+
+        @Override
+        public boolean hasNext() {
+            return itr.hasNext();
+        }
+
+        @Override
+        public E next() {
+            return itr.next().getValue().value;
+        }
     }
 }
