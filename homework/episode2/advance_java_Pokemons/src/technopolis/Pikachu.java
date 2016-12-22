@@ -6,11 +6,10 @@ import java.util.Random;
 /**
  * Created by Anton on 10.11.2016.
  */
-public class Pikachu extends Pokemon {
+public class Pikachu extends Pokemon implements  TailAttack, ElectricAttack{
 
-    private double strengthFirst = 1;
-    private double strengthSecond = 0.5;
-    private Random random = new Random();
+    private double strengthElec = 1;
+    private double strengthTail = 0.5;
 
     Pikachu(String str, int h) {
         name = str;
@@ -21,47 +20,25 @@ public class Pikachu extends Pokemon {
     public double attack(int num) {
         switch (num) {
             case 1:
-                return firstAttack();
+                return attackWithTail();
             case 2:
-                return secondAttack();
+                return electroAttack();
         }
         return 0.0;
     }
 
-    private double firstAttack() {
-        System.out.println("Attack " + name + " = " + strengthFirst);
-        return strengthFirst;
+    public double attackWithTail() {
+        System.out.println(name + " attacks with tail: " + strengthTail);
+        return strengthTail;
+    }
+    
+    public double electroAttack() {
+        System.out.println(name + " attacks with electricity: " + strengthElec);
+        return strengthElec;
     }
 
-    private double secondAttack() {
-        System.out.println("Attack " + name + " = " + strengthSecond);
-        return strengthSecond;
-    }
-
-    @Override
     public void block(double force) {
-        double r = generateNum();
-        if (r > 0.55) {
-            double d = generateNum();
-            r = Math.abs(r - d);
-        }
-        r = force * (1 - r);
-        r = round2(r);
-        System.out.println(name + "'s block= " + r);
-        health -= r;
-        health = round2(health);
-    }
-
-    private double round2(double numb) {
-        int a;
-        double b = numb;
-        a = (int) (b * 100);
-        b = (double) a / 100;
-        return b;
-    }
-
-    private double generateNum() {
-        return round2(random.nextDouble());
+        super.block(force);
     }
 
     @Override
@@ -72,16 +49,12 @@ public class Pikachu extends Pokemon {
         }
         switch (num) {
             case 1:
-                strengthFirst = round2(strengthFirst + r);
+                strengthElec = round2(strengthElec + r);
                 break;
             case 2:
-                strengthSecond = round2(strengthSecond + r);
+                strengthTail = round2(strengthTail + r);
                 break;
         }
-    }
-
-    public double getHealth() {
-        return health;
     }
 
     @Override

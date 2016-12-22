@@ -63,7 +63,11 @@ public class LFUCache<E> implements Iterable<E> {
         return cache.size() == CAPACITY;
     }
 
-    private int getLFUKey(){
+    public void clear() {
+        cache.clear();
+    }
+
+    public int getLFUKey(){
         int min = Integer.MAX_VALUE;
         int key = -1;
         for (Map.Entry<Integer, Value> item : cache.entrySet()) {
